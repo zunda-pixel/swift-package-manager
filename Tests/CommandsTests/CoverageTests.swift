@@ -485,6 +485,8 @@ struct CoverageTests {
                     ] + testData.formats.flatMap({ ["--coverage-format", $0.rawValue] }),
                     buildSystem: buildSystem,
                 )
+                // `testData.expected` always uses `/` as the path separator; normalize the
+                // actual output the same way so the comparison is platform-independent.
                 let actual = stdout.trimmingCharacters(in: .whitespacesAndNewlines)
 
                 #expect(actual == updatedExpected, "stdout: \(stdout)\n\nstderr: \(stderr)")
@@ -782,7 +784,8 @@ struct CoverageTests {
                     ],
                     buildSystem: buildSystem,
                 ).stdout.trimmingCharacters(in: .whitespacesAndNewlines)
-                let expectedJsonPath = "\(defaultBuildOutput)/codecov/Simple.json"
+                let expectedJsonPath = try AbsolutePath(validating: defaultBuildOutput)
+                    .appending(components: "codecov", "Simple.json")
 
                 let (stdout, stderr) = try await executeSwiftTest(
                     fixturePath,
@@ -798,13 +801,13 @@ struct CoverageTests {
                     buildSystem: buildSystem,
                 )
 
-                let actual = stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+                let actual = AbsolutePath(stdout.trimmingCharacters(in: .whitespacesAndNewlines))
                 #expect(
                     actual == expectedJsonPath,
                     "stdout: \(stdout)\n\nstderr: \(stderr)",
                 )
                 #expect(
-                    actual.contains(bogusOutputDir.pathString) == false,
+                    actual.pathString.contains(bogusOutputDir.pathString) == false,
                     "JSON path should not be overridable via -Xcov json=--output-dir. stdout: \(stdout)",
                 )
             }

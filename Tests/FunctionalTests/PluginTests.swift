@@ -849,9 +849,11 @@ struct PluginTests {
     @Test(
         .tags(
             .Feature.Command.Package.Plugin,
-        )
+        ),
+        .issue("https://github.com/swiftlang/swift-package-manager/issues/10710", relationship: .defect),
     )
     func testPluginAPIsForMixedLanguageTargets() async throws {
+        try await withKnownIssue("https://github.com/swiftlang/swift-package-manager/issues/10710") {
         try await fixture(name: "Miscellaneous/Plugins/MixedTargetPluginAPIs") { fixturePath in
             let (stdout, _) = try await executeSwiftPackage(
                 fixturePath,
@@ -871,6 +873,9 @@ struct PluginTests {
             #expect(stdout.contains(#"Mixed.swiftDefinitions = ["SWIFT_DEFINITION"]"#))
             #expect(stdout.contains(#"Mixed.clangDefinitions = ["PREPROCESSOR_MACRO"]"#))
             #expect(stdout.contains(#"Mixed.headerSearchPaths = ["extra_headers"]"#))
+        }
+        } when: {
+            ProcessInfo.hostOperatingSystem == .windows
         }
     }
 

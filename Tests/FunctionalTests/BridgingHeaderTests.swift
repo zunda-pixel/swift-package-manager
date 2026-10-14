@@ -25,7 +25,10 @@ import Testing
 )
 struct BridgingHeaderTests {
     /// A Swift executable that uses a bridging header.
-    @Test
+    @Test(
+        .requiresBridgingHeaderManifestSupport,
+        .issue("https://github.com/swiftlang/swift-package-manager/issues/10708", relationship: .verifies),
+    )
     func bridgingHeaderBasics() async throws {
         try await fixture(name: "Miscellaneous/BridgingHeader") { fixturePath in
             try await executeSwiftBuild(
@@ -37,7 +40,10 @@ struct BridgingHeaderTests {
     }
 
     /// A bridging header that imports C++ code.
-    @Test
+    @Test(
+        .requiresBridgingHeaderManifestSupport,
+        .issue("https://github.com/swiftlang/swift-package-manager/issues/10708", relationship: .verifies),
+    )
     func bridgingHeaderImportingCxx() async throws {
         try await fixture(name: "Miscellaneous/BridgingHeaderCxx") { fixturePath in
             try await executeSwiftBuild(
@@ -49,7 +55,10 @@ struct BridgingHeaderTests {
     }
 
     /// A mixed source target with both an underlying module and a bridging header.
-    @Test
+    @Test(
+        .requiresGeneratedHeaderUnderlyingModuleIncludeBase,
+        .requiresBridgingHeaderManifestSupport,
+    )
     func bridgingHeaderWithUnderlyingClangModule() async throws {
         try await fixture(name: "Miscellaneous/BridgingHeaderWithClangModule") { fixturePath in
             try await executeSwiftBuild(
@@ -61,7 +70,10 @@ struct BridgingHeaderTests {
     }
 
     /// A mixed source target whose bridging header includes a header found via custom search paths.
-    @Test
+    @Test(
+        .requiresBridgingHeaderManifestSupport,
+        .issue("https://github.com/swiftlang/swift-package-manager/issues/10708", relationship: .verifies),
+    )
     func bridgingHeaderWithCustomHeaderSearchPaths() async throws {
         try await fixture(name: "Miscellaneous/BridgingHeaderSearchPaths") { fixturePath in
             try await executeSwiftBuild(
@@ -72,7 +84,10 @@ struct BridgingHeaderTests {
         }
     }
 
-    @Test
+    @Test(
+        .requiresBridgingHeaderManifestSupport,
+        .issue("https://github.com/swiftlang/swift-package-manager/issues/10708", relationship: .verifies),
+    )
     func bridgingHeaderRejectedByNativeBuildSystem() async throws {
         try await fixture(name: "Miscellaneous/BridgingHeader") { fixturePath in
             await expectThrowsCommandExecutionError(
