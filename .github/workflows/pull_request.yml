@@ -69,12 +69,15 @@ jobs:
 
   soundness:
     name: Soundness
-    uses: swiftlang/github-workflows/.github/workflows/soundness.yml@0.0.15
+    # uses: swiftlang/github-workflows/.github/workflows/soundness.yml@0.0.15
+    uses: swiftlang/github-workflows/.github/workflows/soundness.yml@bkhouri/main/soundness-api-diff-add-docs
     with:
       license_header_check_project_name: "Swift"
       license_header_check_enabled: true
       unacceptable_language_check_enabled: true
-      api_breakage_check_enabled: false
+      api_breakage_check_enabled: true
+      api_breakage_check_allowlist_path: api-breakages-allowlist.txt
+      api_breakage_check_additional_tool_arguments: --products SwiftPMAPI
       format_check_enabled: false
       shell_check_enabled: false
       docs_check_enabled: true
